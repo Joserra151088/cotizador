@@ -2,10 +2,10 @@
 // Catálogo de productos/servicios
 // ==============================
 const catalogo = [
-  { id: 1, tipo: "producto", nombre: "Laptop Lenovo ThinkPad", precio: 13500 },
-  { id: 2, tipo: "producto", nombre: "Monitor Samsung 24''", precio: 2890 },
-  { id: 3, tipo: "servicio", nombre: "Instalación de red", precio: 1200 },
-  { id: 4, tipo: "servicio", nombre: "Mantenimiento preventivo", precio: 850 }
+  { id: 1, tipo: "producto", nombre: "Tiras Reactivas", precio: 300 },
+  { id: 2, tipo: "producto", nombre: "Glucometro'", precio: 1500 },
+  { id: 3, tipo: "servicio", nombre: "Consulta a domicilio", precio: 800 },
+  { id: 4, tipo: "servicio", nombre: "Consulta Telemedicina", precio: 400 }
 ];
 
 // ==============================
