@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotizador Previta</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <img src="logo-previta.png" alt="Logo Previta" id="logo">
+        <h1>Cotización</h1>
+    </header>
+
+    <main>
+        <form id="cotizacion-form">
+            <label for="cliente">Nombre del cliente:</label>
+            <input type="text" id="cliente" required>
+
+            <label for="vigencia">Vigencia (días):</label>
+            <input type="number" id="vigencia" required>
+
+            <label for="item-select">Selecciona un producto o servicio:</label>
+            <select id="item-select"></select>
+
+            <input type="number" id="cantidad" placeholder="Cantidad" min="1" value="1">
+            <button type="button" id="agregar-item">Añadir</button>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Descripción</th>
+                    <th>Cantidad</th>
+                    <th>Precio Unitario</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody id="detalle-items"></tbody>
+        </table>
+
+        <div class="totales">
+            <p id="subtotal">Subtotal: $0.00</p>
+            <p id="iva">IVA (16%): $0.00</p>
+            <p id="total">Total: $0.00</p>
+        </div>
+
+        <button id="generar-pdf">Generar PDF</button>
+    </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script src="script.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
