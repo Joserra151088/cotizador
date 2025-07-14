@@ -1,9 +1,6 @@
-const catalogo = [
-  { id: 1, nombre: "Laptop Lenovo ThinkPad", precio: 13500 },
-  { id: 2, nombre: "Monitor Samsung 24''", precio: 2890 },
-  { id: 3, nombre: "Instalación de red", precio: 1200 },
-  { id: 4, nombre: "Mantenimiento preventivo", precio: 850 }
-];
+
+// Catalogo de productos o servicios se encuentra en esta estructura
+import { catalogo } from './catlogo.js'
 
 const itemSelect = document.getElementById("item-select");
 let itemsCotizados = [];
