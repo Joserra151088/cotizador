@@ -1,6 +1,5 @@
-
-// Catalogo de productos o servicios se encuentra en esta estructura
-import { catalogo } from './catlogo.js'
+// Catalogo de productos y/o servicios
+import { catalogo } from './catalogo.js';
 
 const itemSelect = document.getElementById("item-select");
 let itemsCotizados = [];
