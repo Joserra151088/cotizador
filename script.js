@@ -1,27 +1,14 @@
-// ==============================
-// Catálogo de productos/servicios
-// ==============================
 const catalogo = [
-  { id: 1, tipo: "producto", nombre: "Tiras Reactivas", precio: 300 },
-  { id: 2, tipo: "producto", nombre: "Glucometro'", precio: 1500 },
-  { id: 3, tipo: "servicio", nombre: "Consulta a domicilio", precio: 800 },
-  { id: 4, tipo: "servicio", nombre: "Consulta Telemedicina", precio: 400 }
+  { id: 1, nombre: "Laptop Lenovo ThinkPad", precio: 13500 },
+  { id: 2, nombre: "Monitor Samsung 24''", precio: 2890 },
+  { id: 3, nombre: "Instalación de red", precio: 1200 },
+  { id: 4, nombre: "Mantenimiento preventivo", precio: 850 }
 ];
 
-// ==============================
-// Referencias a elementos del DOM
-// ==============================
 const itemSelect = document.getElementById("item-select");
-const detalleItems = document.getElementById("detalle-items");
-const subtotalElem = document.getElementById("subtotal");
-const ivaElem = document.getElementById("iva");
-const totalElem = document.getElementById("total");
-
 let itemsCotizados = [];
 
-// ==============================
-// Poblar el selector de ítems
-// ==============================
+// Cargar catálogo en el dropdown
 catalogo.forEach(item => {
   const option = document.createElement("option");
   option.value = item.id;
@@ -29,9 +16,7 @@ catalogo.forEach(item => {
   itemSelect.appendChild(option);
 });
 
-// ==============================
-// Agregar ítem seleccionado al arreglo
-// ==============================
+// Agregar producto a la cotización
 document.getElementById("agregar-item").addEventListener("click", () => {
   const itemId = parseInt(itemSelect.value);
   const cantidad = parseInt(document.getElementById("cantidad").value);
@@ -49,11 +34,11 @@ document.getElementById("agregar-item").addEventListener("click", () => {
   renderTabla();
 });
 
-// ==============================
-// Mostrar los ítems en la tabla y calcular totales
-// ==============================
+// Renderizar tabla de productos agregados
 function renderTabla() {
+  const detalleItems = document.getElementById("detalle-items");
   detalleItems.innerHTML = "";
+
   let subtotal = 0;
 
   itemsCotizados.forEach(({ descripcion, cantidad, precio, total }) => {
@@ -71,53 +56,71 @@ function renderTabla() {
   const iva = subtotal * 0.16;
   const total = subtotal + iva;
 
-  subtotalElem.textContent = "Subtotal: $" + subtotal.toFixed(2);
-  ivaElem.textContent = "IVA (16%): $" + iva.toFixed(2);
-  totalElem.textContent = "Total: $" + total.toFixed(2);
+  document.getElementById("subtotal").textContent = "Subtotal: $" + subtotal.toFixed(2);
+  document.getElementById("iva").textContent = "IVA (16%): $" + iva.toFixed(2);
+  document.getElementById("total").textContent = "Total: $" + total.toFixed(2);
 }
 
-// ==============================
-// Generación de PDF con jsPDF y diseño corporativo
-// ==============================
-document.getElementById("generar-pdf").addEventListener("click", () => {
+// Generar el PDF con formato profesional
+document.getElementById("generar-pdf").addEventListener("click", async () => {
   const cliente = document.getElementById("cliente").value;
   const vigencia = document.getElementById("vigencia").value;
+  const plantillaPath = document.getElementById("plantilla-select").value;
 
   if (!cliente || !vigencia || itemsCotizados.length === 0) {
-    alert("Por favor completa todos los campos y agrega al menos un producto.");
+    alert("Completa todos los campos antes de generar la cotización.");
     return;
   }
 
-  const doc = new jspdf.jsPDF();
+  const existingPdfBytes = await fetch(plantillaPath).then(res => res.arrayBuffer());
+  const { PDFDocument, rgb, StandardFonts } = PDFLib;
+  const plantillaPdf = await PDFDocument.load(existingPdfBytes);
+  const pdfDoc = await PDFDocument.create();
+  const pages = await pdfDoc.copyPages(plantillaPdf, plantillaPdf.getPageIndices());
+  pages.forEach(page => pdfDoc.addPage(page));
 
-  // Encabezado corporativo azul
-  doc.setFillColor(10, 61, 98);
-  doc.rect(0, 0, 210, 20, "F");
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(20);
-  doc.text("Previta - COTIZACIÓN", 105, 13, null, null, "center");
+  const page = pdfDoc.addPage([595, 842]); // Tamaño A4
+  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-  // Información del cliente
-  doc.setTextColor(0);
-  doc.setFontSize(12);
-  doc.text(`Cliente: ${cliente}`, 10, 30);
-  doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 10, 37);
-  doc.text(`Vigencia: ${vigencia} días`, 10, 44);
+  let y = 780;
 
-  // Tabla de productos
-  const tabla = itemsCotizados.map(item => [
-    item.descripcion,
-    item.cantidad.toString(),
-    `$${item.precio.toFixed(2)}`,
-    `$${item.total.toFixed(2)}`
-  ]);
+  page.drawText("COTIZACIÓN", { x: 220, y, size: 20, font: boldFont, color: rgb(0.1, 0.25, 0.45) });
+  y -= 40;
 
-  doc.autoTable({
-    head: [["Descripción", "Cantidad", "Precio Unitario", "Total"]],
-    body: tabla,
-    startY: 55,
-    styles: { halign: "center" },
-    headStyles: { fillColor: [10, 61, 98] }
+  page.drawText(`Cliente: ${cliente}`, { x: 50, y, size: 12, font });
+  y -= 20;
+  page.drawText(`Fecha: ${new Date().toLocaleDateString()}`, { x: 50, y, size: 12, font });
+  y -= 20;
+  page.drawText(`Vigencia: ${vigencia} días`, { x: 50, y, size: 12, font });
+  y -= 30;
+
+  // Tabla encabezado
+  const tableX = 50;
+  const headerHeight = 20;
+  const columnWidths = [200, 80, 100, 100];
+
+  page.drawRectangle({
+    x: tableX, y, width: columnWidths.reduce((a, b) => a + b), height: headerHeight, color: rgb(0.1, 0.25, 0.45)
+  });
+
+  page.drawText("Descripción", { x: tableX + 5, y: y + 5, size: 12, font: boldFont, color: rgb(1,1,1) });
+  page.drawText("Cantidad", { x: tableX + columnWidths[0] + 5, y: y + 5, size: 12, font: boldFont, color: rgb(1,1,1) });
+  page.drawText("Precio Unitario", { x: tableX + columnWidths[0] + columnWidths[1] + 5, y: y + 5, size: 12, font: boldFont, color: rgb(1,1,1) });
+  page.drawText("Total", { x: tableX + columnWidths[0] + columnWidths[1] + columnWidths[2] + 5, y: y + 5, size: 12, font: boldFont, color: rgb(1,1,1) });
+
+  y -= headerHeight;
+
+  // Filas de productos
+  itemsCotizados.forEach(item => {
+    page.drawRectangle({
+      x: tableX, y, width: columnWidths.reduce((a, b) => a + b), height: headerHeight, color: rgb(0.95, 0.95, 0.95)
+    });
+    page.drawText(item.descripcion, { x: tableX + 5, y: y + 5, size: 10, font });
+    page.drawText(`${item.cantidad}`, { x: tableX + columnWidths[0] + 5, y: y + 5, size: 10, font });
+    page.drawText(`$${item.precio.toFixed(2)}`, { x: tableX + columnWidths[0] + columnWidths[1] + 5, y: y + 5, size: 10, font });
+    page.drawText(`$${item.total.toFixed(2)}`, { x: tableX + columnWidths[0] + columnWidths[1] + columnWidths[2] + 5, y: y + 5, size: 10, font });
+    y -= headerHeight;
   });
 
   // Totales
@@ -125,20 +128,35 @@ document.getElementById("generar-pdf").addEventListener("click", () => {
   const iva = subtotal * 0.16;
   const total = subtotal + iva;
 
-  const finalY = doc.lastAutoTable.finalY + 10;
-  doc.setFontSize(12);
-  doc.text(`Subtotal: $${subtotal.toFixed(2)}`, 140, finalY);
-  doc.text(`IVA (16%): $${iva.toFixed(2)}`, 140, finalY + 7);
-  doc.setFont(undefined, "bold");
-  doc.text(`Total: $${total.toFixed(2)}`, 140, finalY + 14);
+  y -= 20;
+  page.drawText(`Subtotal: $${subtotal.toFixed(2)}`, { x: 380, y, size: 12, font: boldFont });
+  y -= 15;
+  page.drawText(`IVA (16%): $${iva.toFixed(2)}`, { x: 380, y, size: 12, font: boldFont });
+  y -= 15;
+  page.drawText(`TOTAL: $${total.toFixed(2)}`, { x: 380, y, size: 14, font: boldFont, color: rgb(0, 0.5, 0) });
 
-  // Pie de página
-  doc.setDrawColor(0);
-  doc.line(10, 280, 200, 280);
-  doc.setFontSize(10);
-  doc.setTextColor(100);
-  doc.text("Previta · Administración de salud poblacional · www.previta.com.mx", 105, 287, null, null, "center");
+  // Pie de página con imagen
+  const imageUrl = 'footer_previta_1.png';
+  const imageBytes = await fetch(imageUrl).then(res => res.arrayBuffer());
+  const image = await pdfDoc.embedPng(imageBytes);
+  const { width: imgOrigWidth, height: imgOrigHeight } = image.scale(1);
+  const maxWidth = 500;
+  const scale = maxWidth / imgOrigWidth;
+  const imgWidth = imgOrigWidth * scale;
+  const imgHeight = imgOrigHeight * scale;
+
+  page.drawImage(image, {
+    x: (595 - imgWidth) / 2,
+    y: 20,
+    width: imgWidth,
+    height: imgHeight
+  });
 
   // Descargar PDF
-  doc.save(`Cotizacion_${cliente}.pdf`);
+  const pdfBytes = await pdfDoc.save();
+  const blob = new Blob([pdfBytes], { type: "application/pdf" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `Cotizacion_${cliente}.pdf`;
+  link.click();
 });
