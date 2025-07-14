@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cotizador Previta</title>
+  <title>Cotizador Previta - Nacer Global</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
   <header>
-    <h1>Cotizador Previta</h1>
+    <h1>Cotizador Previta - Nacer Global</h1>
   </header>
 
   <main>
@@ -28,6 +28,12 @@
 
       <button id="agregar-item">Añadir producto/servicio</button>
     </section>
+        <section class="form-section">
+      <label for="plantilla-select">Selecciona plantilla PDF:</label>
+      <select id="plantilla-select">
+        <option value="plantillas/PSI_Nacer_Global.pdf">PSI_Nacer Global</option>
+        <option value="plantillas/MediClub_Previta_WTW.pdf">MediClub - Previta WTW</option>
+      </select>
 
     <section class="table-section">
       <h3>Detalle de productos/servicios:</h3>
@@ -50,12 +56,7 @@
       </div>
     </section>
 
-    <section class="form-section">
-      <label for="plantilla-select">Selecciona plantilla PDF:</label>
-      <select id="plantilla-select">
-        <option value="plantillas/PSI_Nacer_Global.pdf">PSI_Nacer Global</option>
-        <option value="plantillas/MediClub_Previta_WTW.pdf">MediClub - Previta WTW</option>
-      </select>
+
 
       <button id="generar-pdf">Generar PDF de Cotización</button>
     </section>
