@@ -1,6 +1,6 @@
 export const catalogo = [
     { id: 1, nombre: "Plan de Salud para Estudiantes", precio: 8500.0 },
-    { id: 2, nombre: "Servicio Médico 2", precio: 10300.14 },
+    { id: 2, nombre: "Insulina", precio: 10300.14 },
     { id: 3, nombre: "Producto Médico 3", precio: 8105.56 },
     { id: 4, nombre: "Servicio Médico 4", precio: 6515.88 },
     { id: 5, nombre: "Producto Médico 5", precio: 3723.97 },
@@ -100,3 +100,4 @@ export const catalogo = [
     { id: 99, nombre: "Producto Médico 99", precio: 6227.99 },
     { id: 100, nombre: "Servicio Médico 100", precio: 6953.26 },
 ];
+
